@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <h:head>
+    </h:head>   
+    <h:form> 
+        <h1>Your Items</h1>
+
+        <h:dataTable value="#{userData.itemss}" var="item" border="2" >
+            <h:column> 
+                <f:facet name="header">Sr. No</f:facet>
+                <h:outputText   value="#{item.id}" />
+            </h:column>
+            <h:column> 
+                <f:facet name="header">Type</f:facet>
+                <h:selectOneMenu value="#{item.type}" rendered="#{item.canEdit}">
+                    <f:selectItem itemValue="Car" itemLabel="Car"  />
+                    <f:selectItem itemValue="Water" itemLabel="Water" />
+                    <f:selectItem itemValue="Flat" itemLabel="Flat" />
+                </h:selectOneMenu>
+
+                <h:outputText value="#{item.type}"
+                              rendered="#{not item.canEdit}"   />
+            </h:column>  
+
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:inputText value="#{item.name}"
+                             size="10" rendered="#{item.canEdit}" />
+                <h:outputText value="#{item.name}"
+                              rendered="#{not item.canEdit}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">Cost</f:facet>
+                <h:inputText value="#{item.cost}"
+                             size="10" rendered="#{item.canEdit}" />
+                <h:outputText value="#{item.cost}"
+                              rendered="#{not item.canEdit}" >
+                    <f:convertNumber  maxFractionDigits="5" />
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Income/Outcome</f:facet>
+                <h:selectOneRadio value="#{item.incoutc}" rendered="#{item.canEdit}">
+                    <f:selectItem itemValue="true" itemLabel="Income"/>
+                    <f:selectItem itemValue="false" itemLabel="Outcome"/>
+
+                </h:selectOneRadio>
+
+                <h:outputText value="#{item.incoutc ? 'Income':'Outcome'}"
+                              rendered="#{not item.canEdit}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">Edit</f:facet>
+                <h:commandButton value="Edit" 
+                                 actionListener="#{userData.editItem(item)}" 
+                                 rendered="#{not item.canEdit}">  
+                </h:commandButton>
+                <h:commandButton value="Save" 
+                                 actionListener="#{userData.saveItem(item)}" 
+                                 rendered="#{item.canEdit}">  
+                </h:commandButton>
+            </h:column> 
+            <h:column>
+                <f:facet name="header">Delete</f:facet>
+                <h:commandButton value="Delete" 
+                                 actionListener="#{userData.deleteItem(item)}" 
+                                 rendered="#{item.canEdit}">  
+                </h:commandButton>
+
+            </h:column>
+        </h:dataTable>
+        <h2>Add Item</h2>
+        <hr/> 
+        <table>
+
+            <h:outputLabel for="Type" value="Type: " />
+            <h:selectOneMenu id="Type" value="#{userData.type}" required="true" >                    
+                <f:selectItem itemValue="" itemLabel="Select one" noSelectionOption="true"/>    
+                <f:selectItem itemValue="Car" itemLabel="Car"  />
+                <f:selectItem itemValue="Water" itemLabel="Water" />
+                <f:selectItem itemValue="Flat" itemLabel="Flat" />
+                <f:ajax render="@all"/>
+            </h:selectOneMenu>
+
+            <h:panelGrid rendered="#{userData.type eq 'Car'}">
+                <h:outputText value="Data: " rendered="#{userData.type eq 'Car'}" />
+
+                <h:inputText id="date" value="#{userData.yearManuf}" 
+                             size="20" required="true" 
+                             label="Receipt Date" >
+                    <f:ajax render="@all"/>					
+                    <f:convertDateTime pattern="d-M-yyyy" /> 
+
+                </h:inputText>  
+                Price:
+                <h:inputText value="#{userData.cost}"
+                             size="10" required="true"
+                             label="Costing">
+                    <f:ajax render="@all" />
+                </h:inputText>
+                <img src="http://i.telegraph.co.uk/multimedia/archive/02799/Nissan-car-product_2799907b.jpg" alt="Smiley face" height="80" width="80"/> 
+                <br>  Date manufactured:</br> 
+                <h:outputText value="#{userData.yearManuf}">
+                    <f:convertDateTime pattern="MM/dd/yyyy" />
+                </h:outputText>
+
+            </h:panelGrid>
+
+            <h:panelGrid  rendered="#{userData.type eq 'Water'}">
+                <h:outputText value="Gallons"  rendered="#{userData.type eq 'Water'}"/>
+                <h:inputText value="#{userData.gallons}"
+                             size="10" required="true"
+                             label="gallons">
+                    <f:ajax render="@all"/>
+                </h:inputText>  
+                <img src="http://www.pharma-blog.ch/wp-content/uploads/2015/04/Wassermatratze-300x199.jpg" alt="Smiley face" height="80" widht="80"/>         
+
+            </h:panelGrid >
+
+
+
+            <h:panelGrid rendered="#{userData.type eq 'Flat'}">
+                <h:outputText value="Square Meters"  rendered="#{userData.type eq 'Flat'}"/>
+                <h:inputText value="#{userData.squareMeters}"
+                             size="10" required="true"
+                             label="Meters">
+                    <f:ajax render="#all"/>
+                </h:inputText>
+                <img src="https://www.mathsisfun.com/definitions/images/square-m.gif" alt="Smiley face" height="80" width="80"/>
+
+            </h:panelGrid>
+
+            <td>Name :</td>
+            <td><h:inputText size="15" value="#{userData.name}" /></td>
+
+            <h:selectOneRadio value="#{userData.incoutc}" >
+                <f:selectItem itemValue="true" itemLabel="Income"/>
+                <f:selectItem itemValue="false" itemLabel="Outcome"/>
+
+            </h:selectOneRadio>
+
+            <tr>
+                <td> </td>
+                <td><h:commandButton value="Add Item" 
+                                     action="#{userData.addItem()}" /></td>
+            </tr>
+
+        </table>	
+        <br/>
+
+    </h:form> 
+</html>
